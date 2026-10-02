@@ -11,6 +11,7 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
+      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
     steps:
       - uses: actions/checkout@v4
 
@@ -19,7 +20,7 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Downgrade cmdline-tools to XML v2
+      - name: Downgrade cmdline-tools
         run: |
           sudo rm -rf $ANDROID_HOME/cmdline-tools
           mkdir -p $ANDROID_HOME/cmdline-tools
@@ -29,9 +30,13 @@ jobs:
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
 
-      - name: Install SDK packages
+      - name: Install SDK + NDK
         run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-33" "build-tools;33.0.2" "platform-tools" > /dev/null
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install \
+            "platforms;android-33" \
+            "build-tools;33.0.2" \
+            "platform-tools" \
+            "ndk;25.2.9519653" > /dev/null
 
       - uses: gradle/actions/setup-gradle@v4
         with:
@@ -41,7 +46,8 @@ jobs:
         run: |
           cd ethereal-os
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          gradle assembleDebug --no-daemon --stacktrace
+          echo "ndk.dir=$ANDROID_NDK_HOME" >> local.properties
+          gradle assembleDebug --no-daemon --stacktrace --warning-mode all 2>&1 | tail -80
 
       - uses: actions/upload-artifact@v4
         if: always()
