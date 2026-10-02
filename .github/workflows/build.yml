@@ -1,4 +1,4 @@
-ame: Build RSM eth-os
+name: Build RSM eth-os
 
 on:
   push:
