@@ -1,4 +1,4 @@
-name: Build RSM eth-os
+ame: Build RSM eth-os
 
 on:
   push:
@@ -11,7 +11,6 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/22.0.7026061
     steps:
       - uses: actions/checkout@v4
 
@@ -42,13 +41,24 @@ jobs:
         run: |
           cd ethereal-os
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "ndk.dir=$ANDROID_NDK_HOME" >> local.properties
-          gradle assembleDebug --no-daemon --stacktrace
+          echo "android.ndkVersion=22.0.7026061" >> gradle.properties
+          gradle assembleDebug --no-daemon --stacktrace 2>&1 | tee /tmp/build.log
+          echo "=== EXIT: ${PIPESTATUS[0]} ==="
           find . -name "*.apk" -type f
+          echo "=== LAST ERROR LINES ==="
+          grep -A 20 "What went wrong" /tmp/build.log || tail -60 /tmp/build.log
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: eth-os-rsm-debug
           path: "**/*.apk"
+          if-no-files-found: warn
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/build.log
           if-no-files-found: warn
