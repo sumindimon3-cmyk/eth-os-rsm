@@ -43,7 +43,7 @@
 
 #include "utilities/KittyMemory/KittyMemory.cpp"
 #include "utilities/KittyMemory/KittyScanner.cpp"
-#include "utilities/KittyMemory/Kittyutils.cpp"
+#include "utilities/KittyMemory/KittyUtils.cpp"
 #include "utilities/KittyMemory/MemoryPatch.cpp"
 
 #include "utilities/il2cpp/dlfcn_ex.cpp"
