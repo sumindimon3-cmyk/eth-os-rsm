@@ -9,7 +9,7 @@
     <application
         android:allowBackup="false"
         android:icon="@mipmap/qazaqdlc"
-        android:label="QazaqDLC"
+        android:label="RSM cheats"
         android:supportsRtl="true">
         <activity android:exported="true" android:name="qazaq.dlc">
             <intent-filter>
