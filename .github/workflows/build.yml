@@ -11,7 +11,7 @@ jobs:
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
       ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/25.2.9519653
+      ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/22.0.7026061
     steps:
       - uses: actions/checkout@v4
 
@@ -30,19 +30,13 @@ jobs:
           mv $ANDROID_HOME/cmdline-tools/cmdline-tools $ANDROID_HOME/cmdline-tools/latest
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null || true
 
-      - name: Install SDK + NDK
+      - name: Install SDK + NDK 22
         run: |
-          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;25.2.9519653" > /dev/null
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-33" "build-tools;33.0.2" "platform-tools" "ndk;22.0.7026061" > /dev/null
 
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '7.6.4'
-
-      - name: List projects
-        run: |
-          cd ethereal-os
-          cat settings.gradle
-          gradle projects
 
       - name: Build APK
         run: |
